@@ -7,9 +7,9 @@
     <style>
         :root {
             --primary-color: #2c3e50;
-            --secondary-color: #3498db;
+            --secondary-color: #fbfbfb;
             --text-color: #333;
-            --background-color: #f5f6fa;
+            --background-color: #ffffff;
         }
 
         body {
