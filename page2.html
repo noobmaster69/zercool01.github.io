@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Less Task Development Meeting - Sprint Board</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header .meta {
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+
+    .epic-banner {
+      background: linear-gradient(45deg, #8e44ad, #3498db);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .epic-banner h3 {
+      margin-bottom: 5px;
+      font-size: 1.3rem;
+    }
+
+    .participants {
+      background: rgba(52, 73, 94, 0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .participants h3 {
+      margin-bottom: 10px;
+    }
+
+    .participant-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .participant {
+      background: #3498db;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      transition: transform 0.2s ease;
+    }
+
+    .participant:hover {
+      transform: scale(1.05);
+    }
+
+    .timeline {
+      background: rgba(241, 196, 15, 0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(241, 196, 15, 0.3);
+    }
+
+    .timeline h3 {
+      color: #f1c40f;
+      margin-bottom: 10px;
+    }
+
+    .timeline-item {
+      margin-bottom: 8px;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .timeline-item::before {
+      content: "📅";
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .vision-section {
+      background: rgba(46, 204, 113, 0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(46, 204, 113, 0.3);
+    }
+
+    .vision-section h3 {
+      color: #2ecc71;
+      margin-bottom: 10px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .column {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+
+    .column.animated {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .column-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid;
+    }
+
+    .column-header h2 {
+      font-size: 1.4rem;
+      margin-left: 10px;
+      color: #2c3e50;
+    }
+
+    .icon {
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .backlog .column-header { border-color: #e74c3c; }
+    .backlog .icon { background: #e74c3c; }
+
+    .progress .column-header { border-color: #f39c12; }
+    .progress .icon { background: #f39c12; }
+
+    .review .column-header { border-color: #3498db; }
+    .review .icon { background: #3498db; }
+
+    .done .column-header { border-color: #27ae60; }
+    .done .icon { background: #27ae60; }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-left: 4px solid;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .card.priority-high { border-left-color: #e74c3c; }
+    .card.priority-medium { border-left-color: #f39c12; }
+    .card.priority-low { border-left-color: #27ae60; }
+
+    .card-title {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .card-description {
+      color: #7f8c8d;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    .assignee {
+      background: #ecf0f1;
+      padding: 4px 8px;
+      border-radius: 20px;
+      color: #34495e;
+      font-weight: 500;
+    }
+
+    .priority {
+      padding: 3px 8px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+    }
+
+    .priority.high { background: #e74c3c; }
+    .priority.medium { background: #f39c12; }
+    .priority.low { background: #27ae60; }
+
+    .meeting-notes {
+      background: rgba(155, 89, 182, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(155, 89, 182, 0.3);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+      color: white;
+    }
+
+    .meeting-notes h3 {
+      color: #9b59b6;
+      margin-bottom: 10px;
+    }
+
+    .meeting-notes ul {
+      padding-left: 20px;
+    }
+
+    .meeting-notes li {
+      margin-bottom: 5px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 768px) {
+      .board {
+        grid-template-columns: 1fr;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .participant-list {
+        justify-content: center;
+      }
+    }
+
+    .card-clicked {
+      animation: cardClick 0.2s ease;
+    }
+
+    @keyframes cardClick {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+<div class="header">
+  <h1>🚀 Less Task Sprint Board</h1>
+  <div class="meta">Development Team Meeting | May 2025 | Multi-Portal Integration Sprint</div>
+</div>
+<div class="epic-banner">
+  <h3>🎯 Current Epic: Moving Helper & Stripe Integration with Security Focus</h3>
+  <p>Building the foundation for multi-portal Web3 service platform with bulletproof security</p>
+</div>
+<div class="participants">
+  <h3>👥 Sprint Team</h3>
+  <div class="participant-list">
+    <span class="participant">Sergio Gutierrez (Product Owner)</span>
+    <span class="participant">Luis Ch (Backend Dev)</span>
+    <span class="participant">Leon Valdez (Full Stack Dev)</span>
+    <span class="participant">Christian Aguirre (Team Member)</span>
+    <span class="participant">Leo (Security Specialist)</span>
+  </div>
+</div>
+<div class="timeline">
+  <h3>📈 Development Timeline - June 2025</h3>
+  <div class="timeline-item"><strong>Week 1-2:</strong> Security infrastructure & encryption algorithms</div>
+  <div class="timeline-item"><strong>Week 3:</strong> Stripe invoice integration (June 21st target)</div>
+  <div class="timeline-item"><strong>Week 4:</strong> Smart payroll implementation begins</div>
+  <div class="timeline-item"><strong>Mid-June:</strong> Sergio focused on family (hospital stay)</div>
+  <div class="timeline-item"><strong>Personal Update:</strong> Sergio moving to bigger location this weekend</div>
+</div>
+<div class="vision-section">
+  <h3>🌟 Project Vision & Future Goals</h3>
+  <ul>
+    <li><strong>Generational Technology:</strong> Building for future generations, creating lasting impact</li>
+    <li><strong>DC Metropolitan Testing:</strong> Testing in one of the fastest-growing, busiest service markets</li>
+    <li><strong>Provider-First Economics:</strong> Service providers get paid the most, system takes minimal cut</li>
+    <li><strong>Essential Services Expansion:</strong> Beyond moving to all home services (HVAC, plumbing, electrical)</li>
+    <li><strong>Global Scalability:</strong> If successful in DC, can expand to any city worldwide</li>
+    <li><strong>Web3 Integration:</strong> Seamless bridge between Web2 payments and Web3 smart contracts</li>
+    <li><strong>Permissionless Access:</strong> Anyone worldwide can use the system without restrictions</li>
+    <li><strong>AMA & Marketing:</strong> Twitter spaces, community building, and investor presentations planned</li>
+  </ul>
+</div>
+<div class="board">
+  <div class="column backlog" data-column="0">
+    <div class="column-header">
+      <div class="icon">📋</div>
+      <h2>Product Backlog</h2>
+    </div>
+    <div class="card priority-high">
+      <div class="card-title">🚀 Smart Payroll Implementation</div>
+      <div class="card-description">Deploy peer-to-peer DeFi payroll system (End of June target) - The "dream part" and highlight of the bot</div>
+      <div class="card-meta">
+        <span class="assignee">Team</span>
+        <span class="priority high">High</span>
+      </div>
+    </div>
+
+    <div class="card priority-medium">
+      <div class="card-title">🔄 Job Rescheduling Feature</div>
+      <div class="card-description">Add ability to reschedule jobs through bot using Moving Helper calendar system</div>
+      <div class="card-meta">
+        <span class="assignee">Leon Valdez</span>
+        <span class="priority medium">Medium</span>
+      </div>
+    </div>
+
+    <div class="card priority-low">
+      <div class="card-title">🏠 Home Task Website Development</div>
+      <div class="card-description">Build marketplace for essential home services beyond moving (Business Task & Home Task portals)</div>
+      <div class="card-meta">
+        <span class="assignee">Sergio Gutierrez</span>
+        <span class="priority low">Low</span>
+      </div>
+    </div>
+
+    <div class="card priority-low">
+      <div class="card-title">📊 SEO & Marketing Campaign</div>
+      <div class="card-description">Implement SEO strategy and launch marketing once bot is ready (SEO expert available)</div>
+      <div class="card-meta">
+        <span class="assignee">Sergio + SEO Helper</span>
+        <span class="priority low">Low</span>
+      </div>
+    </div>
+
+    <div class="card priority-medium">
+      <div class="card-title">🌐 Multi-Portal Architecture</div>
+      <div class="card-description">Design system to support unlimited portal integrations for infinite revenue streams</div>
+      <div class="card-meta">
+        <span class="assignee">Team</span>
+        <span class="priority medium">Medium</span>
+      </div>
+    </div>
+
+    <div class="card priority-medium">
+      <div class="card-title">📄 White Paper Development</div>
+      <div class="card-description">Professional documentation reflecting current development progress</div>
+      <div class="card-meta">
+        <span class="assignee">Sergio Gutierrez</span>
+        <span class="priority medium">Medium</span>
+      </div>
+    </div>
+  </div>
+  <div class="column progress" data-column="1">
+    <div class="column-header">
+      <div class="icon">⚡</div>
+      <h2>In Progress</h2>
+    </div>
+    <div class="card priority-high">
+      <div class="card-title">🤖 Moving Helper Bot Integration</div>
+      <div class="card-description">Complete job scraping, status validation, payment code integration, and calendar events</div>
+      <div class="card-meta">
+        <span class="assignee">Luis Ch</span>
+        <span class="priority high">High</span>
+      </div>
+    </div>
+
+    <div class="card priority-high">
+      <div class="card-title">🔐 Encryption Algorithm Development</div>
+      <div class="card-description">Build encryption system for Stripe and blockchain keys with thorough testing (1-2 weeks)</div>
+      <div class="card-meta">
+        <span class="assignee">Leon Valdez</span>
+        <span class="priority high">High</span>
+      </div>
+    </div>
+
+    <div class="card priority-high">
+      <div class="card-title">🏥 Isolated Security Server Setup</div>
+      <div class="card-description">Leo to configure completely isolated server for key management (within 1 week)</div>
+      <div class="card-meta">
+        <span class="assignee">Leo (External)</span>
+        <span class="priority high">High</span>
+      </div>
+    </div>
+
+    <div class="card priority-medium">
+      <div class="card-title">🗂️ Job Completion Database & CRM</div>
+      <div class="card-description">Track completed jobs, helper assignments, and customer relationships for repeat business</div>
+      <div class="card-meta">
+        <span class="assignee">Luis Ch</span>
+        <span class="priority medium">Medium</span>
+      </div>
+    </div>
+  </div>
+  <div class="column review" data-column="2">
+    <div class="column-header">
+      <div class="icon">👀</div>
+      <h2>Review</h2>
+    </div>
+    <div class="card priority-high">
+      <div class="card-title">💳 Stripe Invoice Generation</div>
+      <div class="card-description">Bot-generated invoices with preset options (2 movers, 3 movers, extra hours) - Week 3-4 target</div>
+      <div class="card-meta">
+        <span class="assignee">Leon Valdez</span>
+        <span class="priority high">High</span>
+      </div>
+    </div>
+
+    <div class="card priority-medium">
+      <div class="card-title">📅 Calendar Integration Polish</div>
+      <div class="card-description">Ensure start times, job details, and helper assignments are properly formatted</div>
+      <div class="card-meta">
+        <span class="assignee">Luis Ch</span>
+        <span class="priority medium">Medium</span>
+      </div>
+    </div>
+
+    <div class="card priority-medium">
+      <div class="card-title">📢 Channel Management System</div>
+      <div class="card-description">Auto-delete completed jobs from admin/public channels, job status validation</div>
+      <div class="card-meta">
+        <span class="assignee">Luis Ch</span>
+        <span class="priority medium">Medium</span>
+      </div>
+    </div>
+
+    <div class="card priority-medium">
+      <div class="card-title">🔄 Job Status Validation</div>
+      <div class="card-description">Filter out unavailable/completed jobs, prevent scheduling conflicts</div>
+      <div class="card-meta">
+        <span class="assignee">Luis Ch</span>
+        <span class="priority medium">Medium</span>
+      </div>
+    </div>
+
+    <div class="card priority-low">
+      <div class="card-title">🔗 Bot-to-Website Rescheduling</div>
+      <div class="card-description">Calendar job history access and date modification through bot interface</div>
+      <div class="card-meta">
+        <span class="assignee">Leon Valdez</span>
+        <span class="priority low">Low</span>
+      </div>
+    </div>
+  </div>
+  <div class="column done" data-column="3">
+    <div class="column-header">
+      <div class="icon">✅</div>
+      <h2>Done</h2>
+    </div>
+    <div class="card priority-high">
+      <div class="card-title">🔗 Stripe On-Ramp Integration</div>
+      <div class="card-description">Crypto payment gateway successfully implemented with stable coin options</div>
+      <div class="card-meta">
+        <span class="assignee">Leon Valdez</span>
+        <span class="priority high">High</span>
+      </div>
+    </div>
+
+    <div class="card priority-high">
+      <div class="card-title">🕷️ Moving Helper Job Scraping</div>
+      <div class="card-description">Successfully scraping jobs and posting to Telegram channels with proxy support</div>
+      <div class="card-meta">
+        <span class="assignee">Luis Ch</span>
+        <span class="priority high">High</span>
+      </div>
+    </div>
+
+    <div class="card priority-medium">
+      <div class="card-title">🤖 Telegram Bot Framework</div>
+      <div class="card-description">Basic bot commands, questionnaire system, and admin/public channel posting</div>
+      <div class="card-meta">
+        <span class="assignee">Luis Ch</span>
+        <span class="priority medium">Medium</span>
+      </div>
+    </div>
+
+    <div class="card priority-medium">
+      <div class="card-title">📡 API Endpoints</div>
+      <div class="card-description">Core endpoints for job listing, payment codes, hour additions, and safe load removal</div>
+      <div class="card-meta">
+        <span class="assignee">Leon Valdez</span>
+        <span class="priority medium">Medium</span>
+      </div>
+    </div>
+
+    <div class="card priority-medium">
+      <div class="card-title">🗄️ Database Models</div>
+      <div class="card-description">Job tracking, status management, and calendar integration models</div>
+      <div class="card-meta">
+        <span class="assignee">Luis Ch</span>
+        <span class="priority medium">Medium</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="meeting-notes">
+  <h3>📝 Key Meeting Insights & Technical Details</h3>
+  <ul>
+    <li><strong>Bot Testing Ready:</strong> Next week bot will be ready for live testing with payment code integration</li>
+    <li><strong>Security-First Approach:</strong> Encryption algorithms and isolated server setup before Stripe integration</li>
+    <li><strong>Timeline Confidence:</strong> Security (1-2 weeks) → Stripe integration (1 week) → Smart payroll (end of June)</li>
+    <li><strong>Technical Architecture:</strong> Chrome Network tools for testing, SSH connections for secure deployment</li>
+    <li><strong>Reputation Protection:</strong> "Bulletproof" security to protect company reputation - no rushing allowed</li>
+    <li><strong>Database Strategy:</strong> Track completed jobs, helper assignments, customer relationships for CRM</li>
+    <li><strong>Channel Management:</strong> Auto-delete completed jobs from channels to prevent overwhelming users</li>
+    <li><strong>Invoice Automation:</strong> Bot will create Stripe invoices from job database with preset buttons</li>
+    <li><strong>Dual Key System:</strong> Same encryption system for both Stripe and blockchain keys</li>
+    <li><strong>Provider Economics:</strong> Service providers get the most pay, system gets minimal but sustainable cut</li>
+    <li><strong>Global Vision:</strong> Peer-to-peer DeFi smart payroll for the first time in the field</li>
+    <li><strong>Personal Context:</strong> Sergio moving this weekend, hospital stay June 10-14, but project continues</li>
+  </ul>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Animate columns on load
+    const columns = document.querySelectorAll('.column');
+    columns.forEach((column, index) => {
+      setTimeout(() => {
+        column.classList.add('animated');
+      }, index * 200);
+    });
+
+    // Add card interactions
+    const cards = document.querySelectorAll('.card');
+
+    cards.forEach(card => {
+      card.addEventListener('click', function() {
+        // Add click animation
+        this.classList.add('card-clicked');
+        setTimeout(() => {
+          this.classList.remove('card-clicked');
+        }, 200);
+
+        // Log card info (could be used for modal or details)
+        const title = this.querySelector('.card-title').textContent;
+        console.log('Clicked card:', title);
+      });
+
+      // Enhanced hover effects
+      card.addEventListener('mouseenter', function() {
+        this.style.boxShadow = '0 12px 30px rgba(0,0,0,0.2)';
+        this.style.transform = 'translateY(-5px) scale(1.02)';
+      });
+
+      card.addEventListener('mouseleave', function() {
+        this.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+        this.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+
+    // Add participant hover effects
+    const participants = document.querySelectorAll('.participant');
+    participants.forEach(participant => {
+      participant.addEventListener('mouseenter', function() {
+        this.style.backgroundColor = '#2980b9';
+      });
+
+      participant.addEventListener('mouseleave', function() {
+        this.style.backgroundColor = '#3498db';
+      });
+    });
+
+    // Add timeline animation
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    timelineItems.forEach((item, index) => {
+      item.style.opacity = '0';
+      item.style.transform = 'translateX(-20px)';
+
+      setTimeout(() => {
+        item.style.transition = 'all 0.5s ease';
+        item.style.opacity = '1';
+        item.style.transform = 'translateX(0)';
+      }, 1000 + (index * 200));
+    });
+  });
+</script>
+</body>
+</html>
